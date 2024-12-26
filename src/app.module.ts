@@ -7,6 +7,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { DatabaseService } from './db/database.service';
 import { PlansModule } from './plans/plans.module';
 import { BaseServicesModule } from './base-services/base-services.module';
+import { UserModule } from './user/user.module';
+import { CentersModule } from './centers/centers.module';
+import { UserDocumentsModule } from './user-documents/user-documents.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { EmployeeModule } from './employee/employee.module';
 
 @Module({
   imports: [
@@ -14,10 +19,17 @@ import { BaseServicesModule } from './base-services/base-services.module';
       envFilePath: '.env',
       isGlobal: true,
     }),
+    MulterModule.register({
+      dest: './uploads',
+    }),
     MongooseModule.forRoot(process.env.DB_URL),
     AdminModule,
     PlansModule,
-    BaseServicesModule
+    BaseServicesModule,
+    UserModule,
+    CentersModule,
+    UserDocumentsModule,
+    EmployeeModule,
   ],
   controllers: [AppController],
   providers: [AppService, DatabaseService],
