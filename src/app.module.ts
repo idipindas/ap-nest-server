@@ -12,6 +12,7 @@ import { CentersModule } from './centers/centers.module';
 import { UserDocumentsModule } from './user-documents/user-documents.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { EmployeeModule } from './employee/employee.module';
+import { EmpDocumentsModule } from './emp-documents/emp-documents.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { EmployeeModule } from './employee/employee.module';
     CentersModule,
     UserDocumentsModule,
     EmployeeModule,
+    EmpDocumentsModule,
   ],
   controllers: [AppController],
   providers: [AppService, DatabaseService],

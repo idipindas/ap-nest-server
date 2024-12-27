@@ -95,24 +95,11 @@ export class UserDocumentsController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateUserDocumentDto: UpdateUserDocumentDto,
-  ) {
-    return this.userDocumentsService.update(+id, updateUserDocumentDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userDocumentsService.remove(+id);
-  }
-
-  @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
         destination: (req, file, cb) => {
-          const uploadDir = path.join(process.cwd(), 'uploads');
+          const uploadDir = path.join(process.cwd(), 'uploads/user-documents');
           if (!fs.existsSync(uploadDir)) {
             fs.mkdirSync(uploadDir, { recursive: true });
           }
@@ -127,17 +114,63 @@ export class UserDocumentsController {
       }),
     }),
   )
-  uploadFile(
+  update(
+    @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
-    @Body() createUserDocumentDto: CreateUserDocumentDto,
+
+    @Body() updateUserDocumentDto: UpdateUserDocumentDto,
   ) {
+    if (!file) {
+      throw new HttpException('No file uploaded', HttpStatus.BAD_REQUEST);
+    }
     const baseDir = process.cwd();
     const relativePath = path.relative(baseDir, file.path);
     const normalizedPath = relativePath.replace(/\\/g, '/');
 
+    return this.userDocumentsService.update(id, {
+      doc: normalizedPath,
+      user_id: updateUserDocumentDto?.user_id,
+      document_type: updateUserDocumentDto?.document_type,
+    });
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.userDocumentsService.remove(+id);
+  }
+
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: (req, file, cb) => {
+          const uploadDir = path.join(process.cwd(), 'uploads/user-documents');
+          if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+          }
+          cb(null, uploadDir);
+        },
+        filename: (req, file, cb) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          const ext = path.extname(file.originalname);
+          cb(null, `${uniqueSuffix}${ext}`);
+        },
+      }),
+    }),
+  )
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() createUserDocumentDto: CreateUserDocumentDto,
+  ) {
     if (!file) {
       throw new HttpException('No file uploaded', HttpStatus.BAD_REQUEST);
     }
+
+    const baseDir = process.cwd();
+    const relativePath = path.relative(baseDir, file.path);
+    const normalizedPath = relativePath.replace(/\\/g, '/');
+
     console.log('Uploaded File:', {
       originalname: file.originalname,
       mimetype: file.mimetype,
@@ -145,13 +178,22 @@ export class UserDocumentsController {
       path: file.path,
       createUserDocumentDto,
     });
+
     const baseUrl = process.env.SERVER_URL;
     const fileUrl = `${baseUrl}/${normalizedPath}`;
-    const resp = this.userDocumentsService.create({
-      doc: normalizedPath,
-      user_id: createUserDocumentDto?.user_id,
-      document_type: createUserDocumentDto?.document_type,
-    });
-    return resp;
+
+    try {
+      const resp = await this.userDocumentsService.create({
+        doc: normalizedPath,
+        user_id: createUserDocumentDto?.user_id,
+        document_type: createUserDocumentDto?.document_type,
+      });
+      return resp;
+    } catch (error) {
+      throw new HttpException(
+        'Error while saving document to the database',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

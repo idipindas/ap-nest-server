@@ -26,7 +26,7 @@ export class UserDocumentsService {
     return resp;
   }
 
-  async update(id: number, updateUserDocumentDto: UpdateUserDocumentDto) {
+  async update(id: string, updateUserDocumentDto: UpdateUserDocumentDto) {
     const resp = await this.userDocumentModel.findByIdAndUpdate(
       id,
       updateUserDocumentDto,
