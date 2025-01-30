@@ -27,10 +27,7 @@ export class EmployeeController {
     FileInterceptor('file', {
       storage: diskStorage({
         destination: (req, file, cb) => {
-          const uploadDir = path.join(
-            process.cwd(),
-            'uploads/employee-photo',
-          );
+          const uploadDir = path.join(process.cwd(), 'uploads/employee-photo');
           if (!fs.existsSync(uploadDir)) {
             fs.mkdirSync(uploadDir, { recursive: true });
           }
@@ -47,15 +44,21 @@ export class EmployeeController {
   )
   create(
     @UploadedFile() file: Express.Multer.File,
-
     @Body() createEmployeeDto: CreateEmployeeDto,
   ) {
-    console.log("data===============================================")
+    console.log('Uploaded file:', file);
+
+    // Construct the relative path for the uploaded file
     const baseDir = process.cwd();
     const relativePath = path.relative(baseDir, file.path);
     const normalizedPath = relativePath.replace(/\\/g, '/');
 
+    console.log('Normalized file path:', normalizedPath);
+
+    // Add the file path to the DTO
     createEmployeeDto.photo = normalizedPath;
+
+    // Call the service to create the employee
     return this.employeeService.create(createEmployeeDto);
   }
 

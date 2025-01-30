@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { EmpDocumentsService } from './emp-documents.service';
 import { CreateEmpDocumentDto } from './dto/create-emp-document.dto';
 import { UpdateEmpDocumentDto } from './dto/update-emp-document.dto';
@@ -19,12 +27,15 @@ export class EmpDocumentsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.empDocumentsService.findOne(+id);
+    return this.empDocumentsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEmpDocumentDto: UpdateEmpDocumentDto) {
-    return this.empDocumentsService.update(+id, updateEmpDocumentDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateEmpDocumentDto: UpdateEmpDocumentDto,
+  ) {
+    return this.empDocumentsService.update(id, updateEmpDocumentDto);
   }
 
   @Delete(':id')

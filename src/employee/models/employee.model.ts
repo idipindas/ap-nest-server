@@ -15,28 +15,18 @@ export class Employee extends Document {
 
   @Prop({ type: Types.ObjectId, required: true, ref: 'Centers' })
   center: Centers;
- 
 
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, required: true})
   phone: string;
-  @Prop({ type: String, required: true, unique: true })
+  @Prop({ type: String, required: true})
   email: string;
-  @Prop({ type: String, required: true, unique: true })
+  @Prop({ type: String, required: true })
   alt_phone: string;
 
-  @Prop({ type: String, unique: true })
+  @Prop({ type: String, required: true })
   photo: string;
-  @Prop({ type: String, unique: true })
+  @Prop({ type: String })
   password: string;
-//   @Prop({ type: String, required: true, enum: ['adhar', 'pancard'] })
-//   document_type: string;
-
-//   @Prop({ type: String, unique: true })
-//   doc: string;
-
-
-
-
 }
 
 export const EmployeeSchema = SchemaFactory.createForClass(Employee);

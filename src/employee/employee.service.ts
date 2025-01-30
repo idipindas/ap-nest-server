@@ -16,6 +16,8 @@ export class EmployeeService {
   ) {}
 
   async create(createEmployeeDto: CreateEmployeeDto) {
+    console.log('88888888888888888888888888888888', createEmployeeDto);
+
     const resp = await this.employeeModel.create(createEmployeeDto);
 
     return resp;
