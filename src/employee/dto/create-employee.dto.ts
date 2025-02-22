@@ -1,47 +1,11 @@
-import {
-  IsBoolean,
-  IsEmail,
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsMongoId,
-} from 'class-validator';
-
+// create-employee.dto.ts
 export class CreateEmployeeDto {
-//   @IsBoolean()
-//   @IsOptional()
-//   status?: boolean;
-
-  @IsString()
-  @IsNotEmpty()
-  employee_name: string;
-
-  @IsString()
-  @IsNotEmpty()
-  address: string;
-
-  @IsMongoId()
-  @IsNotEmpty()
-  center: string;
-
-  @IsString()
-  @IsNotEmpty()
-  phone: string;
-
-  @IsEmail()
-  @IsNotEmpty()
+  name: string;
   email: string;
-
-  @IsString()
-  @IsNotEmpty()
-  alt_phone: string;
-
-  @IsString()
-  @IsOptional()
+  phone: string;
+  address?: string;
   photo?: string;
-
-  @IsString()
-  @IsNotEmpty()
+  adhar: string;
+  center: string;
   password: string;
 }

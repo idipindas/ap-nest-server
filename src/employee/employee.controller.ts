@@ -10,58 +10,44 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { CreateBankDetailsDto } from './dto/create-bankdetails.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import * as path from 'path';
+import { extname } from 'path';
 import * as fs from 'fs';
+import { CreateEmployeeDto } from './dto/create-employee.dto';
 
+
+const photoStorage = {
+  storage: diskStorage({
+    destination: './uploads/photos',
+    filename: (req, file, callback) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      const fileExtName = extname(file.originalname);
+      callback(null, `${file.fieldname}-${uniqueSuffix}${fileExtName}`);
+    },
+  }),
+};
+
+// Multer storage configuration for Aadhaar file
+const adharStorage = {
+  storage: diskStorage({
+    destination: './uploads/adhars',
+    filename: (req, file, callback) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      const fileExtName = extname(file.originalname);
+      callback(null, `${file.fieldname}-${uniqueSuffix}${fileExtName}`);
+    },
+  }),
+};
 @Controller('employee')
 export class EmployeeController {
-  constructor(private readonly employeeService: EmployeeService) {}
-
+  constructor(private readonly employeeService: EmployeeService) { }
   @Post()
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: (req, file, cb) => {
-          const uploadDir = path.join(process.cwd(), 'uploads/employee-photo');
-          if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-          }
-          cb(null, uploadDir);
-        },
-        filename: (req, file, cb) => {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          const ext = path.extname(file.originalname);
-          cb(null, `${uniqueSuffix}${ext}`);
-        },
-      }),
-    }),
-  )
-  create(
-    @UploadedFile() file: Express.Multer.File,
-    @Body() createEmployeeDto: CreateEmployeeDto,
-  ) {
-    console.log('Uploaded file:', file);
-
-    // Construct the relative path for the uploaded file
-    const baseDir = process.cwd();
-    const relativePath = path.relative(baseDir, file.path);
-    const normalizedPath = relativePath.replace(/\\/g, '/');
-
-    console.log('Normalized file path:', normalizedPath);
-
-    // Add the file path to the DTO
-    createEmployeeDto.photo = normalizedPath;
-
-    // Call the service to create the employee
-    return this.employeeService.create(createEmployeeDto);
+  create(@Body() employeeDto: CreateEmployeeDto) {
+    return this.employeeService.create(employeeDto);
   }
-
   @Get()
   findAll() {
     return this.employeeService.findAll();

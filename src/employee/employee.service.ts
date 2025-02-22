@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Employee } from './models/employee.model';
 import { EmployeeBankDetails } from './models/bank-details.model';
 import { Model } from 'mongoose';
 import { CreateBankDetailsDto } from './dto/create-bankdetails.dto';
+import { Employee } from './models/emp.model';
 
 @Injectable()
 export class EmployeeService {

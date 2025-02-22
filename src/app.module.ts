@@ -13,6 +13,7 @@ import { UserDocumentsModule } from './user-documents/user-documents.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { EmployeeModule } from './employee/employee.module';
 import { EmpDocumentsModule } from './emp-documents/emp-documents.module';
+import { PlanBookingModule } from './plan-booking/plan-booking.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { EmpDocumentsModule } from './emp-documents/emp-documents.module';
     UserDocumentsModule,
     EmployeeModule,
     EmpDocumentsModule,
+    PlanBookingModule,
   ],
   controllers: [AppController],
   providers: [AppService, DatabaseService],
